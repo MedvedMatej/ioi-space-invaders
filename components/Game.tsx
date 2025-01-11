@@ -259,11 +259,14 @@ export function Game({ onGameOver, onGameQuit }: GameProps) {
     const gameState = gameStateRef.current;
     if (!gameState || gameState.gameOver || isPaused) return;
 
+    // Get delta time in seconds, with a fallback value
+    const deltaTime = (appRef.current?.ticker?.deltaMS ?? 16.67) / 1000;
+
     if (keysRef.current.has('arrowleft') || keysRef.current.has('a')) {
-      gameState.player.sprite.x -= CONFIG.player.speed;
+      gameState.player.sprite.x -= CONFIG.player.speed * deltaTime;
     }
     if (keysRef.current.has('arrowright') || keysRef.current.has('d')) {
-      gameState.player.sprite.x += CONFIG.player.speed;
+      gameState.player.sprite.x += CONFIG.player.speed * deltaTime;
     }
 
     // Keep player in bounds
@@ -271,7 +274,7 @@ export function Game({ onGameOver, onGameQuit }: GameProps) {
 
     // Update bullets
     [...gameState.bullets, ...gameState.enemyBullets].forEach((bullet, _bulletIndex) => {
-      bullet.sprite.y += bullet.velocity.y;
+      bullet.sprite.y += bullet.velocity.y * deltaTime;
 
       // Remove bullets that are off screen
       if (bullet.sprite.y < 0 || bullet.sprite.y > CONFIG.height) {
@@ -379,7 +382,7 @@ export function Game({ onGameOver, onGameQuit }: GameProps) {
     // Update enemies
     let shouldChangeDirection = false;
     gameState.enemies.forEach((enemy) => {
-      enemy.sprite.x += enemy.velocity.x;
+      enemy.sprite.x += enemy.velocity.x * deltaTime;
 
       if (enemy.sprite.x > CONFIG.width - 30 || enemy.sprite.x < 30) {
         shouldChangeDirection = true;
