@@ -12,3 +12,12 @@ V konzoli izvrši naslednje ukaze:
 - `npm run dev`
 
 Odpri [http://localhost:3000](http://localhost:3000) v brskalniku.
+
+## Navodila za igranje
+
+### Nadzor igralca
+- Premikaj roko za premik igralnega lika
+- Za stranljanje naredi ščipajočo gesto
+
+### Cilj
+Premagaj čim več valov nasprotnikov in prodobi točke.
