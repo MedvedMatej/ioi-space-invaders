@@ -1,5 +1,8 @@
 ## Navodila za lokalno postavitev
 
+Predpogoj:
+- Naložen Node.js
+
 V konzoli izvrši naslednje ukaze:
 
 - `git clone https://github.com/MedvedMatej/ioi-space-invaders`
