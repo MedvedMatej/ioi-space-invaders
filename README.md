@@ -14,6 +14,7 @@ V konzoli izvrši naslednje ukaze:
 Odpri [http://localhost:3000](http://localhost:3000) v brskalniku.
 
 ## Navodila za igranje
+Klikni gumb "Play" in postavi roko v vidni kot kamere. Počakaj, da se igra prične.
 
 ### Nadzor igralca
 - Premikaj roko za premik igralnega lika
