@@ -1,7 +1,8 @@
 ## Navodila za lokalno postavitev
 
 Predpogoj:
-- Naložen Node.js
+- Node.js
+- Git
 
 V konzoli izvrši naslednje ukaze:
 
