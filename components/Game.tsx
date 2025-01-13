@@ -259,8 +259,8 @@ export function Game({ onGameOver, onGameQuit }: GameProps) {
     const gameState = gameStateRef.current;
     if (!gameState || gameState.gameOver || isPaused) return;
 
-    // Get delta time in seconds, with a fallback value
-    const deltaTime = (appRef.current?.ticker?.deltaMS ?? 16.67) / 1000;
+    // Get delta time in seconds, with a fallback value and maximum value to prevent large jumps
+    const deltaTime = Math.min((appRef.current?.ticker?.deltaMS ?? 16.67) / 1000, 0.1);
 
     if (keysRef.current.has('arrowleft') || keysRef.current.has('a')) {
       gameState.player.sprite.x -= CONFIG.player.speed * deltaTime;
@@ -382,6 +382,7 @@ export function Game({ onGameOver, onGameQuit }: GameProps) {
     // Update enemies
     let shouldChangeDirection = false;
     gameState.enemies.forEach((enemy) => {
+      // Apply horizontal movement with capped deltaTime
       enemy.sprite.x += enemy.velocity.x * deltaTime;
 
       if (enemy.sprite.x > CONFIG.width - 30 || enemy.sprite.x < 30) {
@@ -392,11 +393,12 @@ export function Game({ onGameOver, onGameQuit }: GameProps) {
     if (shouldChangeDirection) {
       gameState.enemies.forEach((enemy) => {
         enemy.velocity.x *= -1;
+        // Keep vertical movement as a fixed value
         enemy.sprite.y += 20;
 
         if (enemy.sprite.y > CONFIG.height - 100) {
           handleGameOver();
-          return; // Exit the game loop immediately
+          return;
         }
       });
     }
@@ -608,6 +610,9 @@ export function Game({ onGameOver, onGameQuit }: GameProps) {
   // Start game loop and enemy shooting only when hand is ready and game is initialized
   useEffect(() => {
     if (!isHandReady || !isGameInitialized || !appRef.current) return;
+
+    // Reset the ticker's deltaMS when starting the game
+    appRef.current.ticker.deltaMS = 16.67; // Reset to default frame time (60 FPS)
 
     // Set up game loop
     gameLoopTickerRef.current = appRef.current.ticker.add(() => {
