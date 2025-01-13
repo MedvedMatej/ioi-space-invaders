@@ -14,6 +14,7 @@ export function Game({ onGameOver, onGameQuit }: GameProps) {
   const gameStateRef = useRef<GameState>(null);
   const keysRef = useRef<Set<string>>(new Set());
   const lastShotRef = useRef<number>(0);
+  const lastEdgeHitRef = useRef<'left' | 'right' | null>(null);
   const [score, setScore] = useState(0);
   const [wave, setWave] = useState(1);
   const [isPaused, setIsPaused] = useState(false);
@@ -183,6 +184,9 @@ export function Game({ onGameOver, onGameQuit }: GameProps) {
   const startNewWave = useCallback(() => {
     const gameState = gameStateRef.current;
     if (!gameState) return;
+
+    // Reset edge hit tracking on new wave
+    lastEdgeHitRef.current = null;
 
     // Clean up all existing bullets
     [...gameState.bullets, ...gameState.enemyBullets].forEach((bullet) => {
@@ -380,17 +384,22 @@ export function Game({ onGameOver, onGameQuit }: GameProps) {
     });
 
     // Update enemies
-    let shouldChangeDirection = false;
+    let currentEdge: 'left' | 'right' | null = null;
+
     gameState.enemies.forEach((enemy) => {
       // Apply horizontal movement with capped deltaTime
       enemy.sprite.x += enemy.velocity.x * deltaTime;
 
-      if (enemy.sprite.x > CONFIG.width - 30 || enemy.sprite.x < 30) {
-        shouldChangeDirection = true;
+      if (enemy.sprite.x > CONFIG.width - 30) {
+        currentEdge = 'right';
+      } else if (enemy.sprite.x < 30) {
+        currentEdge = 'left';
       }
     });
 
-    if (shouldChangeDirection) {
+    // Only change direction if we hit the opposite edge from last time
+    if (currentEdge && currentEdge !== lastEdgeHitRef.current) {
+      lastEdgeHitRef.current = currentEdge;
       gameState.enemies.forEach((enemy) => {
         enemy.velocity.x *= -1;
         // Keep vertical movement as a fixed value
